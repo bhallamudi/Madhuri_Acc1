@@ -3,11 +3,21 @@
 <suite parallel="classes" name="Failed suite [Suite]" guice-stage="DEVELOPMENT">
   <test thread-count="5" parallel="classes" name="Test(failed)">
     <classes>
-      <class name="TestRunDLPFlow.RunTestCase1">
+      <class name="TestRunDLPFlow.RunExcelCompareForDuplicateCheck">
         <methods>
-          <include name="RunTest1"/>
+          <include name="RunExcelCompareForDuplicateCheck"/>
         </methods>
-      </class> <!-- TestRunDLPFlow.RunTestCase1 -->
+      </class> <!-- TestRunDLPFlow.RunExcelCompareForDuplicateCheck -->
+      <class name="TestRunDLPFlow.RunExcelCompareForNewOldCheck">
+        <methods>
+          <include name="RunExcelCompareForNewOldCheck1"/>
+        </methods>
+      </class> <!-- TestRunDLPFlow.RunExcelCompareForNewOldCheck -->
+      <class name="TestRunDLPFlow.RunExcelCompareForSubKCount">
+        <methods>
+          <include name="RunExcelCompareForSubKCount"/>
+        </methods>
+      </class> <!-- TestRunDLPFlow.RunExcelCompareForSubKCount -->
     </classes>
   </test> <!-- Test(failed) -->
 </suite> <!-- Failed suite [Suite] -->

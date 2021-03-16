@@ -3,8 +3,9 @@
 <suite parallel="classes" name="Suite">
   <test thread-count="1" parallel="classes" name="Test">
     <classes>
-      <class name="TestRunDLPFlow.RunTestCase1"/>
-      <class name="TestRunDLPFlow.RunTestCase2"/>
+      <class name="TestRunDLPFlow.RunExcelCompareForNewOldCheck"/>
+      <class name="TestRunDLPFlow.RunExcelCompareForDuplicateCheck"/>
+      <class name="TestRunDLPFlow.RunExcelCompareForSubKCount"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->
