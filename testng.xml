@@ -6,6 +6,7 @@
       <class name="TestRunDLPFlow.RunExcelCompareForNewOldCheck"/>
       <class name="TestRunDLPFlow.RunExcelCompareForDuplicateCheck"/>
       <class name="TestRunDLPFlow.RunExcelCompareForSubKCount"/>
+      <class name="TestRunDLPFlow.RunSetup"/>
     </classes>
   </test> <!-- Test -->
 </suite> <!-- Suite -->

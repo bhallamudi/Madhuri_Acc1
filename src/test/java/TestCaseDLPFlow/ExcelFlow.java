@@ -1,27 +1,41 @@
 package TestCaseDLPFlow;
 
 import java.io.FileInputStream;
-
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+
+import org.apache.bcel.generic.SWITCH;
+import org.apache.poi.ss.usermodel.Cell;
+import org.apache.poi.ss.usermodel.Row;
+import org.apache.poi.xssf.usermodel.XSSFCell;
+import org.apache.poi.xssf.usermodel.XSSFRow;
 import org.apache.poi.xssf.usermodel.XSSFSheet;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
-import Configurations.PropertiesFile;
+
+import Configurations.ConfiguratorSupport;
+
+
 
 public class ExcelFlow {
-	static String TodayFilePathString = "E:\\Accenture related works\\DLP_Automation\\ResourceRoster_AllStatus_2021 (5).xlsx";
-	static String yesterdayFilePathString = "E:\\Accenture related works\\DLP_Automation\\ResourceRoster_AllStatus_2021 (4).xlsx";
-	static String sheetNameString = "ResourceRoster_AllStatus_2021";
+	public static ConfiguratorSupport cs= new ConfiguratorSupport("Environment.properties");
+	static String TodayFilePathString = cs.getproperty("TodayExcelPath");
+	static String yesterdayFilePathString = cs.getproperty("YesterdayExcelPath");
+	static String sheetNameString = cs.getproperty("SheetName");
+	
+	static List<pojo> data3 = new ArrayList<>();
+	static List<pojo> data4 = new ArrayList<>();
+	static List<String> duplicateList2 = new ArrayList<String>();
+	static List<String> subK = new ArrayList<String>();
 
 	public static void compareTwoExcelsForNewOldUserCheck() throws IOException 
 	{
-		PropertiesFile.getproperties();
+		
 		List<pojo> data1 = new ArrayList<>();
 		List<pojo> data2 = new ArrayList<>();
-		List<pojo> data3 = new ArrayList<>();
-		List<pojo> data4 = new ArrayList<>();
+		
 		
 		FileInputStream file1 = new FileInputStream(TodayFilePathString);
 		FileInputStream file2 = new FileInputStream(yesterdayFilePathString);
@@ -35,17 +49,26 @@ public class ExcelFlow {
 		 XSSFSheet sheet2 = workbook2.getSheet(sheetNameString);
 		
 		 //Get New resources
-		 for(int i = 1;i<=sheet1.getLastRowNum();i++) {
-				String workerid= sheet1.getRow(i).getCell(5).getStringCellValue();
-				String emailid= sheet1.getRow(i).getCell(12).getStringCellValue();
-				
-				
-				pojo p= new pojo(workerid, emailid);
-				data1.add(p);
-	
-			}
+		 for (int i=1; i<=sheet1.getLastRowNum(); i++) {
+		      Row row = sheet1.getRow(i);
+		      if (row == null) {
+		    	  break;
+		      } 
+		      else {
+		    	  	String workerid= sheet1.getRow(i).getCell(5).getStringCellValue();
+					String emailid= sheet1.getRow(i).getCell(12).getStringCellValue();
+					pojo p= new pojo(workerid, emailid);
+					data1.add(p);
+					}
+		      
+		 }
 			//Get Remove Resources
-			for(int i = 1;i<=sheet2.getLastRowNum();i++) {
+		 for (int i=1; i<=sheet2.getLastRowNum(); i++) {
+		      Row row = sheet2.getRow(i);
+		      if (row == null) {
+		    	  break;
+		      } 
+		      else {
 				String workerid= sheet2.getRow(i).getCell(5).getStringCellValue();
 				String emailid= sheet2.getRow(i).getCell(12).getStringCellValue();
 				
@@ -53,6 +76,7 @@ public class ExcelFlow {
 				data2.add(p);
 	
 			}
+		 }
 			System.out.println("Today's Data: "+data1.size());
 			System.out.println("Yesterday's data: "+data2.size());
 			
@@ -91,7 +115,16 @@ public class ExcelFlow {
 			
 	}
 	
-	public static void compareDataForDuplicateCheck() throws IOException {
+	public static boolean isRowEmpty(Row row) {
+	    for (int c = row.getFirstCellNum(); c < row.getLastCellNum(); c++) {
+	        Cell cell = row.getCell(c);
+	        if (cell != null && cell.getCellType() != Cell.CELL_TYPE_BLANK)
+	            return false;
+	    }
+	    return true;
+	}
+	
+	public static void compareDataForDuplicateCheck() throws NullPointerException, IOException {
 		
 		List<pojo> data5 = new ArrayList<>();	
 		FileInputStream file1 = new FileInputStream(TodayFilePathString);
@@ -100,14 +133,21 @@ public class ExcelFlow {
 
 		// Get only first sheet from the workbook
 		 XSSFSheet sheet1 = workbook1.getSheet(sheetNameString);
-			
-			//Duplicates check
-			for(int i = 1;i<=sheet1.getLastRowNum();i++) {
-				String worker= sheet1.getRow(i).getCell(11).getStringCellValue();
-				String email= sheet1.getRow(i).getCell(12).getStringCellValue();
-				pojo p= new pojo(worker, email);
-				data5.add(p);
-			}
+		 
+		 
+		 for (int i=1; i<=sheet1.getLastRowNum(); i++) {
+		      Row row = sheet1.getRow(i);
+		      if (row == null) {
+		    	  break;
+		      } 
+		      else {
+					String worker= sheet1.getRow(i).getCell(11).getStringCellValue();
+					String email= sheet1.getRow(i).getCell(12).getStringCellValue();
+						pojo p= new pojo(worker, email);
+						data5.add(p);
+					}
+		      
+		 }
 			
 			System.out.println("Duplicat check data "+data5.size());
 			List<String> email=new ArrayList<>();
@@ -150,7 +190,7 @@ public class ExcelFlow {
 			for(int i=0;i<data8.size();i++) {
 				worker.add(data8.get(i).getWorkerId());
 			}
-		    List<String> duplicateList2 = new ArrayList<String>();
+		    
 		    HashSet<String> set1 = new HashSet<String>();
 			 int count2 = 0;
 			    for (String item : worker)
@@ -167,14 +207,14 @@ public class ExcelFlow {
 		    System.out.println("Duplicate Resources: "+duplicateList2.size());
 			System.out.println();
 			duplicateList2.forEach(System.out::println);
-		 
+		
 	}
 	
 	public void subKAny() throws IOException {
 		
 		
 		List<String> data1 = new ArrayList<String>();
-		List<String> subK = new ArrayList<String>();
+		
 		FileInputStream file1 = new FileInputStream(TodayFilePathString);
 		// Get the workbook instance for XLSX file
 		XSSFWorkbook workbook1 = new XSSFWorkbook(file1);
@@ -184,23 +224,29 @@ public class ExcelFlow {
 		 String Tag1 = "@accenture.com";
 		 String Tag2 = "@Accenture.Com";
 			//Sub K Check
-			for(int i = 1;i<=sheet1.getLastRowNum();i++) {
-				String email= sheet1.getRow(i).getCell(12).getStringCellValue();
-				if(email.contains(Tag1))
-				{
-					data1.add(email);
-				}
-				else {
-					if(email.contains(Tag2))
+		 for (int i=1; i<=sheet1.getLastRowNum(); i++) {
+		      Row row = sheet1.getRow(i);
+		      if (row == null) {
+		    	  break;
+		      } 
+		      else {
+		    	  String email= sheet1.getRow(i).getCell(12).getStringCellValue();
+					if(email.contains(Tag1))
 					{
-						continue;
+						data1.add(email);
 					}
 					else {
-					subK.add(email);
+						if(email.contains(Tag2))
+						{
+							continue;
+						}
+						else {
+						subK.add(email);
+						}
 					}
-				}
-			}
-			
+					}
+		      
+		 }
 			System.out.println("Sub K Count Checking for "+subK.size());
 			subK.forEach(System.out::println);
 			

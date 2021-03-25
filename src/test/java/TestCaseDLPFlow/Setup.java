@@ -1,43 +1,31 @@
 package TestCaseDLPFlow;
 
-import java.io.FileInputStream;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.OutputStream;
-import java.util.Properties;
-
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
-import Configurations.PropertiesFile;
+import Configurations.ConfiguratorSupport;
+import io.github.bonigarcia.wdm.WebDriverManager;
 
 public class Setup {
 	
-	static WebDriver driver = null;
-	public static String BrowserName;
-	public static String url;
-	public static String chromepath;
+	static WebDriver driver;
+	public static ConfiguratorSupport cs= new ConfiguratorSupport("Environment.properties");
 	
-	
-	
-	
-	
-	
-	public void InvokeBrowser() throws Throwable {
-		String ProjectPath = System.getProperty("user.dir");
-		PropertiesFile.getproperties();
-		if(BrowserName.equalsIgnoreCase("chrome")) {
-			System.setProperty("webdriver.chrome.driver", chromepath);
-			driver = new ChromeDriver();
-		}
-		
+	public void  InvokeBrowser() throws Throwable {
+		String browser;
+		browser=cs.getproperty("BrowserName");
+				if(browser.equalsIgnoreCase("chrome")) {
+					String chromePath= cs.getproperty("chromepath");
+					System.setProperty("webdriver.chrome.driver", chromePath);
+					driver = new ChromeDriver();
+				}
 	}
 	
 
 	public void InvokeURL() {
-		PropertiesFile.getproperties();
-		driver.get(url);
+		
+		driver.get(cs.getproperty("ProjectURL"));
 	}
 	
 
